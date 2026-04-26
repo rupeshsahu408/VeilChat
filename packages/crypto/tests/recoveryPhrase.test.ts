@@ -14,9 +14,35 @@ describe("BIP-39 recovery phrase", () => {
   });
 
   it("rejects a tampered phrase (bad checksum)", () => {
-    const words = generateRecoveryPhrase().split(" ");
-    words[0] = words[0] === "abandon" ? "ability" : "abandon";
-    expect(isValidRecoveryPhrase(words.join(" "))).toBe(false);
+    // Deterministic test vector. The canonical BIP-39 zero-entropy
+    // phrase ends in "about" because SHA-256(0x00 × 16) starts with
+    // the nibble 0011, matching the last 4 bits (checksum) of the
+    // word "about" (index 3 = 0b000_0000_0011).
+    //
+    // Replacing the final word with "abandon" (index 0 = 0b000_0000_0000)
+    // keeps the 128 entropy bits unchanged (still all zero, so the
+    // expected checksum is still 0011) but stores 0000 instead. The
+    // checksum mismatch is guaranteed — no probabilistic flakiness.
+    //
+    // The previous form of this test mutated a randomly-generated
+    // phrase and relied on the new checksum *not* coincidentally
+    // matching the old one, which fails ~1 run in 16 on any platform.
+    const valid =
+      "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
+    expect(isValidRecoveryPhrase(valid)).toBe(true);
+
+    const tampered =
+      "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon";
+    expect(isValidRecoveryPhrase(tampered)).toBe(false);
+  });
+
+  it("rejects a phrase containing a non-wordlist word", () => {
+    // Word "notaword" is not in the BIP-39 English wordlist, so
+    // validation must fail on wordlist membership before it even
+    // reaches the checksum check.
+    const phrase =
+      "notaword abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
+    expect(isValidRecoveryPhrase(phrase)).toBe(false);
   });
 
   it("derives the same identity key for the same phrase", () => {
