@@ -1,0 +1,360 @@
+/**
+ * Wire envelope used as the *plaintext* of every Signal-encrypted chat
+ * message. Lets us send text, image, voice, view-once media or a link
+ * preview through the same Double Ratchet pipeline without needing a
+ * separate transport per type.
+ *
+ *   v1 envelope = JSON object on a single line.
+ *
+ *     { v: 1, t: "text",  body: "hello" }
+ *     { v: 1, t: "image", body?: "caption", media: { ... } }
+ *     { v: 1, t: "voice", media: { ... } }
+ *
+ *   v2 envelope = same union plus optional fields:
+ *     - `ttl`: disappearing-message TTL in seconds (mirrored to server)
+ *     - `vo`:  view-once flag (client deletes after first view)
+ *     - `lp`:  link preview (server-fetched OG metadata)
+ *
+ * For backwards compatibility, an incoming plaintext that isn't valid
+ * envelope JSON is treated as a v0 plain text message.
+ */
+
+import type { MediaAttachment } from "./media";
+
+export interface EnvelopeLinkPreview {
+  url: string;
+  resolvedUrl?: string | null;
+  title?: string | null;
+  description?: string | null;
+  siteName?: string | null;
+  /**
+   * Original third-party image URL. Stored only for reference/debug.
+   * Renderers MUST prefer `imageDataUrl` and never fetch this directly,
+   * because doing so would leak the recipient's IP to the linked site.
+   */
+  imageUrl?: string | null;
+  /** Server-fetched OG image, inlined as a `data:` URL. */
+  imageDataUrl?: string | null;
+  /** Server-fetched favicon, inlined as a `data:` URL. */
+  iconDataUrl?: string | null;
+}
+
+/**
+ * Reply reference attached to a chat envelope. Points at the original
+ * message by its server id and includes a short snippet so the
+ * recipient can render the quoted preview without needing the original
+ * decrypted message in their local log (useful on a fresh device).
+ */
+export interface EnvelopeReplyRef {
+  /** Server message id of the message being replied to. */
+  id: string;
+  /** Short preview of the quoted body (≤ 140 chars). */
+  body: string;
+  /**
+   * Direction of the quoted message *from the sender's POV*. Receiver
+   * mirrors it: my-out = peer's "in", my-in = peer's "out".
+   */
+  dir: "in" | "out";
+}
+
+export interface EnvelopeExtras {
+  /** Disappearing-message TTL, seconds. */
+  ttl?: number;
+  /**
+   * Seen-TTL ("Scene Setting"), seconds. Sender-driven disappearing
+   * timer that starts the moment the *recipient* opens the message.
+   * Both sides apply the same value so the message is wiped from both
+   * devices in lockstep instead of relying on each device's local
+   * preference (which may differ).
+   */
+  sttl?: number;
+  /** View-once. */
+  vo?: boolean;
+  /** Link preview metadata. */
+  lp?: EnvelopeLinkPreview;
+  /** Reply-to reference. */
+  re?: EnvelopeReplyRef;
+}
+
+/**
+ * Phase 7: Sender-Key Distribution Message — sent through the existing
+ * 1:1 ratchet to share a per-(group, epoch) chain key. Recipients store
+ * the chainKey indexed by (groupId, senderUserId, epoch); subsequent
+ * group messages from that sender are decryptable.
+ */
+export type SenderKeyDistribution = {
+  v: 2;
+  t: "skdm";
+  /** Group id. */
+  gid: string;
+  /** Group epoch this key is valid for. */
+  ep: number;
+  /** Base64 32-byte initial chain key. */
+  ck: string;
+} & EnvelopeExtras;
+
+/**
+ * Sender Key REQUEST. Sent through the 1:1 ratchet by a receiver who
+ * tried to decrypt a group message but doesn't have the sender's chain
+ * key for the given (group, epoch). The recipient (the original sender
+ * of the unreadable message) responds by re-distributing their current
+ * SKDM to the requester. Mirrors WhatsApp's "request sender key
+ * distribution message" recovery path.
+ */
+export type SenderKeyRequest = {
+  v: 2;
+  t: "skreq";
+  /** Group id. */
+  gid: string;
+  /** Group epoch the requester needs. */
+  ep: number;
+};
+
+/**
+ * Tombstone sent through the ratchet when the sender hits "Delete for
+ * everyone". The receiver replaces their local row for `target` with a
+ * "This message was deleted" placeholder; the server-side ciphertext
+ * is also wiped via `messages.deleteForEveryone`.
+ */
+export type DeleteForEveryone = {
+  v: 2;
+  t: "del";
+  /** Server message id of the original message being unsent. */
+  target: string;
+};
+
+/**
+ * Reaction add/remove. Empty `emoji` means "remove my reaction".
+ * Reactions are stored as a per-(message, sender) single emoji slot to
+ * match WhatsApp's behaviour.
+ */
+export type ReactionEnvelope = {
+  v: 2;
+  t: "rxn";
+  /** Server message id of the message being reacted to. */
+  target: string;
+  /** Single emoji grapheme; empty string clears the reaction. */
+  emoji: string;
+};
+
+/**
+ * Edit a previously-sent text message. Sender stamps the new body and
+ * an `editedAt` timestamp; the recipient overwrites the local row's
+ * `plaintext` and shows an "(edited)" marker.
+ *
+ * WhatsApp limits edits to ~15 minutes after send; we mirror that on
+ * the client UI but do not enforce it server-side (the server never
+ * sees the body so it cannot validate).
+ */
+export type EditMessage = {
+  v: 2;
+  t: "edit";
+  /** Server message id of the original message being edited. */
+  target: string;
+  /** New text body (replaces the original `body`). */
+  body: string;
+  /** ISO timestamp of when the edit was made. */
+  editedAt: string;
+};
+
+/**
+ * View-once "seen" tombstone. Sent by the recipient through the ratchet
+ * the moment they open a view-once message. The sender's device replaces
+ * the local row's content with an "Opened" placeholder and asks the
+ * server to wipe the persisted ciphertext so a fresh device can never
+ * restore it.
+ */
+export type ViewOnceSeenEnvelope = {
+  v: 2;
+  t: "vo_seen";
+  /** Server message id of the view-once message that was opened. */
+  target: string;
+  /** ISO timestamp when the recipient opened it. */
+  at: string;
+};
+
+/**
+ * Best-effort screenshot warning. Recipient fires this through the
+ * ratchet when their device detects a probable screenshot capture
+ * (e.g. PrintScreen keypress, page going hidden while a view-once is
+ * open). Browsers cannot reliably observe OS-level captures, so this
+ * is informational only — the sender's UI shows a warning badge.
+ */
+export type ViewOnceScreenshotEnvelope = {
+  v: 2;
+  t: "vo_ss";
+  /** Server message id of the view-once message that was captured. */
+  target: string;
+  /** ISO timestamp when capture was detected. */
+  at: string;
+};
+
+/**
+ * Group poll. Sent as a group message; carries the poll definition.
+ * Votes arrive as separate `poll_vote` envelopes referencing this pollId.
+ */
+export type PollEnvelope = {
+  v: 2;
+  t: "poll";
+  /** Stable client-generated UUID for this poll. */
+  pollId: string;
+  question: string;
+  choices: string[];
+};
+
+/**
+ * Cast or retract a vote on a group poll. choiceIdx = -1 removes
+ * the sender's vote.
+ */
+export type PollVoteEnvelope = {
+  v: 2;
+  t: "poll_vote";
+  pollId: string;
+  /** 0-based index into the choices array. -1 = remove vote. */
+  choiceIdx: number;
+};
+
+/**
+ * Broadcast the sender's current mood / status to a peer. Pure
+ * side-effect — does NOT create a chat row, just updates
+ * `chatPrefs.peerMood` on the recipient. An empty `text` + empty
+ * `emoji` means "I cleared my mood; hide it".
+ *
+ * `expiresAt` is an ISO timestamp the recipient uses to auto-hide
+ * the mood after it lapses (no server-side timer needed).
+ */
+export type MoodEnvelope = {
+  v: 2;
+  t: "mood";
+  emoji: string;
+  text: string;
+  /** ISO timestamp; if past, recipient hides the mood. */
+  expiresAt: string;
+};
+
+export type ChatEnvelope =
+  | ({ v: 1 | 2; t: "text"; body: string } & EnvelopeExtras)
+  | ({ v: 1 | 2; t: "image"; body?: string; media: MediaAttachment } & EnvelopeExtras)
+  | ({ v: 1 | 2; t: "voice"; media: MediaAttachment } & EnvelopeExtras)
+  | SenderKeyDistribution
+  | SenderKeyRequest
+  | DeleteForEveryone
+  | ReactionEnvelope
+  | EditMessage
+  | ViewOnceSeenEnvelope
+  | ViewOnceScreenshotEnvelope
+  | PollEnvelope
+  | PollVoteEnvelope
+  | MoodEnvelope;
+
+export function encodeEnvelope(env: ChatEnvelope): string {
+  return JSON.stringify(env);
+}
+
+export function decodeEnvelope(plaintext: string): ChatEnvelope {
+  if (!plaintext.startsWith("{")) {
+    return { v: 1, t: "text", body: plaintext };
+  }
+  try {
+    const parsed = JSON.parse(plaintext) as Partial<ChatEnvelope> & {
+      v?: number;
+      t?: string;
+    };
+    if (parsed && (parsed.v === 1 || parsed.v === 2)) {
+      if (parsed.t === "text" && typeof (parsed as { body?: unknown }).body === "string") {
+        return parsed as ChatEnvelope;
+      }
+      if (
+        (parsed.t === "image" || parsed.t === "voice") &&
+        (parsed as { media?: unknown }).media &&
+        typeof ((parsed as { media: { blobId?: unknown } }).media.blobId) === "string"
+      ) {
+        return parsed as ChatEnvelope;
+      }
+      if (
+        parsed.t === "skdm" &&
+        typeof (parsed as { gid?: unknown }).gid === "string" &&
+        typeof (parsed as { ep?: unknown }).ep === "number" &&
+        typeof (parsed as { ck?: unknown }).ck === "string"
+      ) {
+        return parsed as ChatEnvelope;
+      }
+      if (
+        parsed.t === "del" &&
+        typeof (parsed as { target?: unknown }).target === "string"
+      ) {
+        return parsed as ChatEnvelope;
+      }
+      if (
+        parsed.t === "rxn" &&
+        typeof (parsed as { target?: unknown }).target === "string" &&
+        typeof (parsed as { emoji?: unknown }).emoji === "string"
+      ) {
+        return parsed as ChatEnvelope;
+      }
+      if (
+        parsed.t === "edit" &&
+        typeof (parsed as { target?: unknown }).target === "string" &&
+        typeof (parsed as { body?: unknown }).body === "string" &&
+        typeof (parsed as { editedAt?: unknown }).editedAt === "string"
+      ) {
+        return parsed as ChatEnvelope;
+      }
+      if (
+        (parsed.t === "vo_seen" || parsed.t === "vo_ss") &&
+        typeof (parsed as { target?: unknown }).target === "string" &&
+        typeof (parsed as { at?: unknown }).at === "string"
+      ) {
+        return parsed as ChatEnvelope;
+      }
+      if (
+        parsed.t === "poll" &&
+        typeof (parsed as { pollId?: unknown }).pollId === "string" &&
+        typeof (parsed as { question?: unknown }).question === "string" &&
+        Array.isArray((parsed as { choices?: unknown }).choices)
+      ) {
+        return parsed as ChatEnvelope;
+      }
+      if (
+        parsed.t === "poll_vote" &&
+        typeof (parsed as { pollId?: unknown }).pollId === "string" &&
+        typeof (parsed as { choiceIdx?: unknown }).choiceIdx === "number"
+      ) {
+        return parsed as ChatEnvelope;
+      }
+      if (
+        parsed.t === "mood" &&
+        typeof (parsed as { emoji?: unknown }).emoji === "string" &&
+        typeof (parsed as { text?: unknown }).text === "string" &&
+        typeof (parsed as { expiresAt?: unknown }).expiresAt === "string"
+      ) {
+        return parsed as ChatEnvelope;
+      }
+    }
+  } catch {
+    /* fall through to plain text */
+  }
+  return { v: 1, t: "text", body: plaintext };
+}
+
+export function envelopePreview(env: ChatEnvelope): string {
+  if (env.t === "skdm") return "";
+  if (env.t === "del") return "🗑 Message deleted";
+  if (env.t === "rxn") return env.emoji ? `Reacted ${env.emoji}` : "";
+  if (env.t === "edit") return env.body;
+  if (env.t === "vo_seen" || env.t === "vo_ss") return "";
+  if (env.t === "poll") return `📊 Poll: ${env.question}`;
+  if (env.t === "poll_vote") return "";
+  if (env.t !== "text" && env.t !== "image" && env.t !== "voice") return "";
+  if (env.vo) return "👁 View-once message";
+  if (env.t === "text") return env.body;
+  if (env.t === "image") return env.body ? `📷 ${env.body}` : "📷 Photo";
+  if (env.t === "voice") return "🎤 Voice message";
+  return "";
+}
+
+/** First http(s) URL in a string, or null. */
+export function firstUrl(s: string): string | null {
+  const m = /https?:\/\/[^\s<>()]+/i.exec(s);
+  return m ? m[0].replace(/[).,;!?"']+$/, "") : null;
+}
