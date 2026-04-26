@@ -12,6 +12,8 @@ Veil is a private, end-to-end encrypted messenger. We can claim "the server can'
 The full Veil application — its UI, product features, and proprietary infrastructure — is not in this repo. **What is here is everything that touches your security.** That's the deal: full transparency on the parts that matter, nothing else.
 
 [![CI](https://github.com/rupeshsahu408/VeilChat/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/rupeshsahu408/VeilChat/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/rupeshsahu408/VeilChat/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/rupeshsahu408/VeilChat/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/rupeshsahu408/VeilChat/badge)](https://scorecard.dev/viewer/?uri=github.com/rupeshsahu408/VeilChat)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](./LICENSE)
 [![Built with TypeScript](https://img.shields.io/badge/Built_with-TypeScript-3178c6.svg)](https://www.typescriptlang.org/)
 

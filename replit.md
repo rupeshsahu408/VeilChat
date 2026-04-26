@@ -57,6 +57,10 @@ safe harbor. Two GitHub-Actions workflows back this up:
   the crypto primitives (`@noble/*`, `@scure/*`, `hash-wasm`) and dev
   tooling (`typescript`, `vitest`, `@types/*`). Major-version bumps
   are deliberately ignored so they get human review.
+- `.github/workflows/scorecard.yml` runs the OpenSSF Scorecard action
+  on push to `main`, on a weekly Monday cron, and on branch-protection
+  changes. Results are published to scorecard.dev (badge in the README
+  links there) and uploaded as SARIF to GitHub code scanning.
 
 ## Brand and trademark policy
 
