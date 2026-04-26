@@ -146,6 +146,48 @@ the **only** wire shapes it is permitted to accept or emit. If you can
 find a field in either file that could carry a plaintext message or a
 private key, file an issue — we consider that a security bug.
 
+### The published-package check
+
+Once a tagged release of `@veil-protocol/crypto` exists on npm, you
+can verify — without trusting us, npm, or this repository — that the
+tarball you just installed was built from this exact source by this
+exact CI workflow:
+
+```bash
+npm install @veil-protocol/crypto
+npm audit signatures
+```
+
+A successful run prints something like:
+
+```
+audited 1 package in 1s
+1 package has a verified registry signature
+1 package has a verified attestation
+```
+
+The **attestation** is a [Sigstore](https://www.sigstore.dev/) record,
+signed by public-good infrastructure (not by us), that links the
+published tarball back to:
+
+- this GitHub repository,
+- the exact commit SHA of the release tag,
+- the exact GitHub Actions workflow run that built it
+  ([`.github/workflows/release.yml`](./.github/workflows/release.yml)).
+
+The release workflow refuses to publish at all unless three gates
+pass: the git tag is GPG-signed (`git verify-tag`), the tag matches
+`vMAJOR.MINOR.PATCH`, and `packages/crypto/package.json`'s version
+matches the tag. So `npm audit signatures` printing "verified
+attestation" is a transitive proof that all three gates passed for
+the version you installed.
+
+If `npm audit signatures` ever fails on a `@veil-protocol/crypto`
+release, **do not use that install** and please report it to
+**Help@sendora.me** (subject `[VeilChat security]`). It would mean
+either npm has been compromised or someone has impersonated the
+package — both are critical findings.
+
 ### The third-party check (planned)
 
 A third-party security audit is planned before the `1.0` release of
@@ -190,8 +232,10 @@ are on the roadmap and their absence is openly acknowledged:
 - A **completed third-party audit** of the crypto package.
   Status: planned for before `1.0`.
 - A **published, signed `0.1.0` release** of `@veil-protocol/crypto`
-  on npm with provenance attestation. Status: pending the next
-  workflow addition.
+  on npm with provenance attestation. Status: release workflow is in
+  place ([`.github/workflows/release.yml`](./.github/workflows/release.yml))
+  and the verification path is documented above; the first signed tag
+  has not yet been pushed.
 - A **fuzzing harness** for the wire-format parser and the envelope
   codec. Status: planned.
 - A **transparency report** detailing government data requests and
