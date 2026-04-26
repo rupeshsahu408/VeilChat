@@ -61,6 +61,19 @@ safe harbor. Two GitHub-Actions workflows back this up:
   on push to `main`, on a weekly Monday cron, and on branch-protection
   changes. Results are published to scorecard.dev (badge in the README
   links there) and uploaded as SARIF to GitHub code scanning.
+- `.github/workflows/release.yml` triggers on `v*.*.*` git-tag pushes.
+  It refuses to publish unless (a) the tag matches `vMAJOR.MINOR.PATCH`,
+  (b) `git verify-tag` succeeds (i.e. the tag is GPG-signed), and
+  (c) `packages/crypto/package.json`'s version matches the tag. It then
+  runs typecheck + the full test suite, builds, and publishes
+  `@veil-protocol/crypto` to npm via `pnpm publish --access public
+  --provenance` using OIDC (`id-token: write`) so npm records a
+  cryptographic attestation linking the tarball back to this exact
+  workflow run. Finally it creates a GitHub Release with auto-generated
+  notes. Requires repo secret `NPM_TOKEN` (an npm automation token with
+  publish rights to the `@veil-protocol` scope) and a `npm-publish`
+  GitHub Environment so production publishes can be gated by required
+  reviewers if desired.
 
 Every action used in the three workflows is **pinned to a full commit
 SHA** with the human-readable version tag preserved as a trailing
