@@ -62,6 +62,23 @@ safe harbor. Two GitHub-Actions workflows back this up:
   changes. Results are published to scorecard.dev (badge in the README
   links there) and uploaded as SARIF to GitHub code scanning.
 
+Every action used in the three workflows is **pinned to a full commit
+SHA** with the human-readable version tag preserved as a trailing
+comment (e.g. `actions/checkout@34e1148... # v4`). Dependabot's
+`github-actions` ecosystem updates the SHAs automatically. This makes
+the OpenSSF Scorecard `Pinned-Dependencies` check pass and prevents
+supply-chain attacks via mutable tag references.
+
+## Public transparency statement
+
+`TRANSPARENCY.md` is the canonical, public summary of what VeilChat
+is, what this repo contains, what the service can and cannot see,
+and how anyone can verify each claim. It links out to `LICENSE`,
+`SECURITY.md`, `TRADEMARK.md`, the protocol docs, the server contract,
+and the three CI workflows. The README's "Verify the cryptography
+yourself" section now points to it. Contact for any correction is
+`Help@sendora.me`.
+
 ## Brand and trademark policy
 
 The product brand is **VeilChat** (with the underlying spec referred to

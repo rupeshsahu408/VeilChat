@@ -51,6 +51,8 @@ You'll see the X3DH handshake, Double Ratchet, Sender Keys, AEAD, KDF, Safety Nu
 
 You don't have to take our word for the green badge either: the [CI workflow](./.github/workflows/ci.yml) re-runs the entire suite — including the published RFC 5869 (HKDF) and RFC 4231 (HMAC-SHA) vectors — on every push and pull request, across Linux, macOS, and Windows on Node 20 and 22.
 
+For the full public statement of what VeilChat can and cannot see, what this repository contains, and how to verify each claim, read **[TRANSPARENCY.md](./TRANSPARENCY.md)**.
+
 ---
 
 ## Why we publish this (and not the whole app)
