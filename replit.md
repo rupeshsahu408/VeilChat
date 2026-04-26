@@ -42,6 +42,18 @@ The README's green CI badge points at this workflow so the test suite —
 including the published RFC 5869 / RFC 4231 vectors — is verifiable from
 outside the repo.
 
+## Brand and trademark policy
+
+The product brand is **VeilChat** (with the underlying spec referred to
+as **Veil Protocol**). The AGPL-3.0 license in `LICENSE` covers the
+source code only; the names "VeilChat" / "Veil Protocol", the logo at
+`brand/veilchat-logo.png`, and the associated visual identity are
+reserved trademarks of the VeilChat project and are **not** licensed
+under AGPL. The full policy — including permitted descriptive uses,
+prohibited fork naming, and how to report abuse — lives in
+`TRADEMARK.md`. The README has a "Brand and trademarks" section that
+links to it. Brand-abuse reports go to `brand@veil.app`.
+
 ## Commands
 
 - `pnpm install` — install workspace dependencies.

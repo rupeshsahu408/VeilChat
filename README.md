@@ -114,9 +114,31 @@ Please do **not** open a public GitHub issue for security-sensitive findings. Em
 
 ## License
 
-AGPL-3.0. Anyone may use, modify, and redistribute Veil's protocol implementation. Modified versions distributed as a network service must publish their source.
+AGPL-3.0. Anyone may use, modify, and redistribute VeilChat's protocol implementation. Modified versions distributed as a network service must publish their source.
 
-The brand "Veil", the Veil logo, and the full Veil application are not licensed under AGPL — they remain the property of the Veil project. This repository contains the protocol implementation and security documentation only.
+## Brand and trademarks
+
+The AGPL-3.0 license covers the **source code** in this repository only.
+
+The names **"VeilChat"** and **"Veil Protocol"**, the **VeilChat logo**
+(shown below, also at [`brand/veilchat-logo.png`](./brand/veilchat-logo.png)),
+and the visual identity associated with them are trademarks of the
+VeilChat project. They are **not** licensed under AGPL-3.0.
+
+<p align="left">
+  <img src="./brand/veilchat-logo.png" alt="VeilChat logo" width="96" height="96" />
+</p>
+
+If you fork this repository or build a product on top of this code,
+you must **rename your fork** and use your own branding. You may not
+ship a product called "VeilChat", "Veil", or any confusingly similar
+name, and you may not use the VeilChat logo. You may, of course, say
+truthfully that your project is *based on* or *derived from* the
+VeilChat protocol code.
+
+The full policy — including what counts as fair descriptive use and
+how to report brand abuse — is in [TRADEMARK.md](./TRADEMARK.md).
+Suspected misuse can be reported to **brand@veil.app**.
 
 ---
 
