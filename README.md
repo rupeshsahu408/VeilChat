@@ -110,6 +110,20 @@ See [`packages/crypto/README.md`](./packages/crypto/README.md) for the full API.
 
 ---
 
+## Contributing
+
+Pull requests are welcome for bug fixes, new test vectors, doc
+improvements, and CI / supply-chain hardening. **Every commit must
+carry a `Signed-off-by:` trailer** (Developer Certificate of Origin)
+— add `-s` to your `git commit` invocation. The
+[`DCO`](./.github/workflows/dco.yml) check on every pull request
+blocks merge if any commit is missing a valid sign-off. Full process,
+scope, and coding conventions are in [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+For security findings, do not open a PR — see [SECURITY.md](./SECURITY.md).
+
+---
+
 ## Reporting security issues
 
 Please do **not** open a public GitHub issue for security-sensitive findings. Email **Help@sendora.me** with the subject `[VeilChat security]` and we'll respond within 72 hours. The full disclosure policy, supported versions, scope, and safe-harbor terms are in [SECURITY.md](./SECURITY.md).

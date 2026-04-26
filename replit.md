@@ -61,6 +61,16 @@ safe harbor. Two GitHub-Actions workflows back this up:
   on push to `main`, on a weekly Monday cron, and on branch-protection
   changes. Results are published to scorecard.dev (badge in the README
   links there) and uploaded as SARIF to GitHub code scanning.
+- `.github/workflows/dco.yml` runs on every pull request (opened,
+  synchronized, reopened, edited). It enumerates every non-merge
+  commit in `BASE_SHA..HEAD_SHA` and requires each to carry a
+  `Signed-off-by: <author-name> <author-email>` trailer that matches
+  the commit's `git log` author, OR (for cherry-picks / co-authors) a
+  well-formed `Signed-off-by:` from any contributor. Failure mode
+  prints the offending SHAs and the exact `git commit --amend
+  --signoff` / `git rebase --signoff` recovery commands. The check is
+  implemented inline in bash (no third-party action) for full
+  auditability and zero supply-chain surface.
 - `.github/workflows/release.yml` triggers on `v*.*.*` git-tag pushes.
   It refuses to publish unless (a) the tag matches `vMAJOR.MINOR.PATCH`,
   (b) `git verify-tag` succeeds (i.e. the tag is GPG-signed), and
@@ -81,6 +91,19 @@ comment (e.g. `actions/checkout@34e1148... # v4`). Dependabot's
 `github-actions` ecosystem updates the SHAs automatically. This makes
 the OpenSSF Scorecard `Pinned-Dependencies` check pass and prevents
 supply-chain attacks via mutable tag references.
+
+## Contributor process
+
+`CONTRIBUTING.md` documents the contribution process. Headline
+requirements: every commit must be signed off under the Developer
+Certificate of Origin 1.1 (`git commit -s`); PRs touching
+`packages/crypto/` must add or update tests; security findings go
+through `SECURITY.md` and never through public PRs; the four checks
+that gate merge are CI, CodeQL, OpenSSF Scorecard, and DCO. The README
+has a "Contributing" section pointing at it. The DCO is intentionally
+chosen over a CLA — it is sufficient to keep the IP chain clean for
+AGPL enforcement and trademark defence without imposing a separate
+legal document on contributors.
 
 ## Public transparency statement
 
