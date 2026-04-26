@@ -1,0 +1,78 @@
+# CODEOWNERS for rupeshsahu408/VeilChat
+#
+# This file declares which GitHub users / teams are automatically
+# requested for review on pull requests touching specific paths.
+# Combined with branch-protection's "Require review from Code Owners"
+# setting, it makes review by a maintainer non-bypassable for
+# security-critical paths.
+#
+# Syntax: <pattern>  <owner1> [<owner2> ...]
+# The LAST matching pattern wins, so order from least specific to most
+# specific. Patterns are gitignore-style globs relative to the repo
+# root.
+#
+# Today there is one maintainer; as the project grows, replace
+# @rupeshsahu408 with a GitHub team (e.g. @veilchat/protocol-maintainers,
+# @veilchat/security-maintainers) so review responsibilities can be
+# rotated without touching code.
+
+# --- Default fallback ---------------------------------------------------
+# Anything not matched by a more specific rule below is owned by the
+# project lead.
+*                                       @rupeshsahu408
+
+# --- Cryptographic core (security-critical) -----------------------------
+# Any change to the crypto implementation, its tests, its build config,
+# or its package metadata requires explicit maintainer review. This is
+# the code that protects every VeilChat user's messages — review here
+# is intentionally non-bypassable.
+/packages/crypto/                       @rupeshsahu408
+/packages/crypto/src/                   @rupeshsahu408
+/packages/crypto/tests/                 @rupeshsahu408
+/packages/crypto/package.json           @rupeshsahu408
+/packages/crypto/tsconfig*.json         @rupeshsahu408
+/packages/crypto/vitest.config.ts       @rupeshsahu408
+
+# --- Server contract (defines what the blind server may see) ------------
+# Widening the contract in any way changes VeilChat's threat model.
+# Narrowing it is welcome; widening it requires explicit justification.
+/server-contract/                       @rupeshsahu408
+
+# --- Protocol docs and threat model -------------------------------------
+# These documents are the public statement of what VeilChat does. They
+# must stay consistent with the code.
+/docs/                                  @rupeshsahu408
+
+# --- Public trust documents ---------------------------------------------
+# These files are the project's legal and trust posture. Changes need
+# maintainer eyes on them.
+/LICENSE                                @rupeshsahu408
+/SECURITY.md                            @rupeshsahu408
+/TRADEMARK.md                           @rupeshsahu408
+/TRANSPARENCY.md                        @rupeshsahu408
+/CONTRIBUTING.md                        @rupeshsahu408
+/README.md                              @rupeshsahu408
+
+# --- Brand assets -------------------------------------------------------
+# Anything in /brand/ is trademarked material; modifications need
+# maintainer sign-off.
+/brand/                                 @rupeshsahu408
+
+# --- CI, supply chain, release pipeline ---------------------------------
+# A malicious change here can subvert every other check in this repo,
+# including the npm release attestation. Ownership is mandatory.
+/.github/workflows/                     @rupeshsahu408
+/.github/dependabot.yml                 @rupeshsahu408
+/.github/CODEOWNERS                     @rupeshsahu408
+/.github/ISSUE_TEMPLATE/                @rupeshsahu408
+/.github/pull_request_template.md       @rupeshsahu408
+
+# --- Workspace / dependency configuration -------------------------------
+# Top-level dependency or workspace shape changes can affect every
+# package; route them to the maintainer.
+/package.json                           @rupeshsahu408
+/pnpm-workspace.yaml                    @rupeshsahu408
+/pnpm-lock.yaml                         @rupeshsahu408
+/.npmrc                                 @rupeshsahu408
+/tsconfig.base.json                     @rupeshsahu408
+/.replit                                @rupeshsahu408

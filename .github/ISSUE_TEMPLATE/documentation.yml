@@ -1,0 +1,86 @@
+name: Documentation issue
+description: Report a problem with the docs (PROTOCOL, BLIND-SERVER, THREAT-MODEL, AUDIT, README, TRANSPARENCY, etc.).
+title: "[docs] "
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Documentation in this repository carries the same weight as the
+        code — it is what users, auditors, and journalists rely on to
+        understand what VeilChat does. Honest corrections are very
+        welcome.
+
+        If the issue is with [TRANSPARENCY.md](https://github.com/rupeshsahu408/VeilChat/blob/main/TRANSPARENCY.md)
+        and you believe a public claim is contradicted by the code, please say
+        so explicitly — those reports are taken very seriously.
+
+  - type: dropdown
+    id: document
+    attributes:
+      label: Which document?
+      options:
+        - "README.md"
+        - "TRANSPARENCY.md"
+        - "SECURITY.md"
+        - "TRADEMARK.md"
+        - "CONTRIBUTING.md"
+        - "docs/PROTOCOL.md"
+        - "docs/BLIND-SERVER.md"
+        - "docs/THREAT-MODEL.md"
+        - "docs/AUDIT.md"
+        - "packages/crypto/README.md"
+        - "Inline code comments"
+        - "Other (please specify)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of issue is this?
+      options:
+        - "Factual error (the doc says X but the code does Y)"
+        - "Outdated information (was true once, no longer accurate)"
+        - "Missing information (something users need to know is not documented)"
+        - "Unclear / confusing wording"
+        - "Broken link or reference"
+        - "Typo / grammar"
+        - "Translation request"
+        - "Other (please describe)"
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Location in the document
+      description: |
+        Section heading, paragraph, or line range. The more specific the
+        better.
+      placeholder: "e.g. TRANSPARENCY.md §3, 'What VeilChat cannot see', third bullet"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem?
+      description: |
+        Quote the existing text (if any) and explain what is wrong with
+        it. If you are reporting a contradiction with the code, link to
+        the file and line in question.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix (optional)
+      description: |
+        If you have a suggested rewrite or correction, paste it here.
+        If you would like to submit it as a pull request, please read
+        CONTRIBUTING.md first.
+    validations:
+      required: false

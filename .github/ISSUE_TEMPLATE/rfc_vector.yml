@@ -1,0 +1,90 @@
+name: New cryptographic test vector
+description: Propose adding a published test vector (RFC, Wycheproof, NIST, IETF draft) to the crypto test suite.
+title: "[vectors] "
+labels:
+  - vectors
+  - good-first-issue
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adding published test vectors is one of the most valuable
+        contributions you can make to this repository. Every vector
+        added here strengthens the auditability story.
+
+        Please describe the vectors you would like to add. If you are
+        able to send a pull request, please read
+        [CONTRIBUTING.md](https://github.com/rupeshsahu408/VeilChat/blob/main/CONTRIBUTING.md)
+        first — especially the DCO sign-off requirement.
+
+  - type: input
+    id: source
+    attributes:
+      label: Source of the vectors
+      description: |
+        Where do these vectors come from? Cite the document and section.
+      placeholder: "e.g. RFC 5869 §A.4, Wycheproof aes_gcm_test.json, NIST CAVP HKDF.txt"
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Link to the source
+      description: A URL where the vectors can be downloaded or read.
+      placeholder: "e.g. https://datatracker.ietf.org/doc/html/rfc5869#appendix-A"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: primitive
+    attributes:
+      label: Which primitive do these vectors cover?
+      multiple: true
+      options:
+        - HKDF (RFC 5869)
+        - HMAC (RFC 4231)
+        - AES-GCM
+        - X25519 / X3DH
+        - Ed25519
+        - Double Ratchet
+        - Sender Keys
+        - Argon2id
+        - BIP-39
+        - Safety numbers
+        - Envelope codec
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why these vectors?
+      description: |
+        What property do these vectors prove that the existing suite
+        does not already cover? Edge cases, large inputs, boundary
+        conditions, known historical bugs they catch?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Would you like to contribute the PR yourself?
+      options:
+        - "Yes — I will open the PR (please read CONTRIBUTING.md)"
+        - "No — I am only proposing the vectors"
+        - "Maybe — I can if someone confirms the approach is wanted"
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: |
+        Anything else relevant — licensing of the vector source, format
+        details, encoding gotchas, etc.
+    validations:
+      required: false

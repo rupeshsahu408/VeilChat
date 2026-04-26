@@ -1,0 +1,109 @@
+name: Bug report
+description: Report a non-security bug in @veil-protocol/crypto, the server contract, the docs, or the CI.
+title: "[bug] "
+labels:
+  - bug
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report.
+
+        **If this bug has security implications — for example, it lets
+        an attacker recover plaintext, derive a private key, downgrade
+        forward secrecy, or leak metadata the threat model says
+        shouldn't leak — STOP. Do not file it here.** Instead, follow
+        [SECURITY.md](https://github.com/rupeshsahu408/VeilChat/blob/main/SECURITY.md)
+        and email **Help@sendora.me** with subject `[VeilChat security]`.
+        We will acknowledge within 72 hours and offer safe-harbor for
+        good-faith research.
+
+  - type: checkboxes
+    id: not-a-security-issue
+    attributes:
+      label: Confirm this is not a security finding
+      description: Please confirm before continuing.
+      options:
+        - label: I have read the warning above and confirm this issue is not a security vulnerability.
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area is the bug in?
+      options:
+        - "packages/crypto/ (the cryptographic implementation)"
+        - "server-contract/ (schema or wire format types)"
+        - "docs/ (PROTOCOL, BLIND-SERVER, THREAT-MODEL, AUDIT)"
+        - ".github/workflows/ (CI, CodeQL, Scorecard, DCO, release)"
+        - "Repository plumbing (package.json, pnpm-workspace, lockfile, .replit)"
+        - "Something else (please describe)"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version, tag, or commit SHA
+      description: |
+        If you hit this on a published `@veil-protocol/crypto` release,
+        give the version (e.g. `0.1.0`). If you hit it from source, give
+        the commit SHA you were on (`git rev-parse HEAD`).
+      placeholder: "e.g. 0.1.0  -or-  commit 2b358d8"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: |
+        Describe the actual behaviour you observed. Be concrete — error
+        messages, stack traces, unexpected output. Paste long output
+        inside a code block.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+      description: |
+        Describe the behaviour you expected and, if applicable, the
+        documentation, RFC, or spec section that promises it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: |
+        The most useful bug report has a small, runnable reproduction.
+        Ideally a failing test case, a short script, or a sequence of
+        commands. The fewer extra dependencies, the better.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        OS, Node.js version, pnpm version, browser version (if relevant).
+        Run `node --version && pnpm --version` and paste the output.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: |
+        Workarounds you tried, related issues, links to upstream
+        discussions, hypotheses about the cause. Optional.
+    validations:
+      required: false

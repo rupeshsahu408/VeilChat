@@ -105,6 +105,32 @@ chosen over a CLA — it is sufficient to keep the IP chain clean for
 AGPL enforcement and trademark defence without imposing a separate
 legal document on contributors.
 
+## Repository governance: CODEOWNERS, PR template, issue templates
+
+- `.github/CODEOWNERS` declares ownership for every security-critical
+  path (the crypto package and its tests, the server contract, the
+  docs, the public trust documents, the brand assets, the CI / release
+  pipeline, and workspace dependency files). All paths currently route
+  to `@rupeshsahu408`; the file is structured so adding a maintainer
+  team later (e.g. `@veilchat/protocol-maintainers`) is a one-line
+  change. Combined with branch-protection's "Require review from Code
+  Owners" setting, owner review on these paths is non-bypassable.
+- `.github/pull_request_template.md` enforces a structured PR: type
+  of change, scope, security considerations (mandatory for
+  `packages/crypto/` and `server-contract/`), testing checklist,
+  related issues, pre-merge checklist (DCO sign-off, no secrets, no
+  unjustified `@ts-ignore`, README updates for public API changes,
+  threat-model updates when the threat model changes).
+- `.github/ISSUE_TEMPLATE/` contains three structured forms
+  (`bug_report.yml`, `rfc_vector.yml`, `documentation.yml`) plus a
+  `config.yml` that disables blank issues and surfaces four contact
+  links: security disclosure (redirect to `SECURITY.md` /
+  `Help@sendora.me`), brand abuse (redirect to `TRADEMARK.md` /
+  `Help@sendora.me`), the transparency statement, and the
+  contribution guide. The bug-report form opens with a hard-stop
+  warning and a required checkbox confirming the report is not a
+  security finding.
+
 ## Public transparency statement
 
 `TRANSPARENCY.md` is the canonical, public summary of what VeilChat

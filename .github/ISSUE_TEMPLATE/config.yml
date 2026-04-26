@@ -1,0 +1,31 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/rupeshsahu408/VeilChat/security/policy
+    about: |
+      Do NOT open a public issue for security findings. Read SECURITY.md
+      and email Help@sendora.me with the subject [VeilChat security].
+      We acknowledge within 72 hours and offer safe-harbor for good-faith
+      research.
+
+  - name: Report brand abuse or trademark misuse
+    url: https://github.com/rupeshsahu408/VeilChat/blob/main/TRADEMARK.md
+    about: |
+      Copycat apps, phishing sites, or misuse of the VeilChat name and
+      logo: do NOT open a public issue. Email Help@sendora.me with the
+      subject [VeilChat brand]. Full policy in TRADEMARK.md.
+
+  - name: Read the public transparency statement
+    url: https://github.com/rupeshsahu408/VeilChat/blob/main/TRANSPARENCY.md
+    about: |
+      Before opening an issue about what VeilChat does or does not see,
+      please read TRANSPARENCY.md — your question may already be answered
+      there in plain English.
+
+  - name: Read the contribution guide
+    url: https://github.com/rupeshsahu408/VeilChat/blob/main/CONTRIBUTING.md
+    about: |
+      Planning to send a pull request? Please read CONTRIBUTING.md first
+      — especially the DCO sign-off requirement and the scope of changes
+      this repository accepts.
