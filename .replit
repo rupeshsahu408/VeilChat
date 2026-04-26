@@ -23,12 +23,11 @@ name = "Start application"
 author = "agent"
 
 [workflows.workflow.metadata]
-outputType = "webview"
+outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pnpm --filter @veil/client dev"
-waitForPort = 5000
+args = "pnpm --filter @veil-protocol/crypto test"
 
 [[ports]]
 localPort = 3001

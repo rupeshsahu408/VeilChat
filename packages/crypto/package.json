@@ -1,0 +1,37 @@
+{
+  "name": "@veil-protocol/crypto",
+  "version": "0.1.0",
+  "description": "Veil's end-to-end encryption core: X3DH, Double Ratchet, Sender Keys, Argon2id, BIP-39, Safety Numbers. Framework-free, runnable in browsers and Node.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@noble/curves": "^1.7.0",
+    "@scure/bip39": "^1.5.0",
+    "hash-wasm": "^4.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.0"
+  }
+}
