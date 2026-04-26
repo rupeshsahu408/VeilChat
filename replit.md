@@ -33,6 +33,15 @@ the codebase isn't useful for cloning the brand, only for auditing it.
 The `Start application` workflow runs `pnpm --filter @veil-protocol/crypto
 test` and prints results to console. There is no web UI.
 
+## Continuous integration
+
+`.github/workflows/ci.yml` runs `pnpm install`, `typecheck`, `build`, and
+`test` for `@veil-protocol/crypto` on every push and pull request to
+`main`, across a 3×2 matrix (Ubuntu / macOS / Windows × Node 20 / 22).
+The README's green CI badge points at this workflow so the test suite —
+including the published RFC 5869 / RFC 4231 vectors — is verifiable from
+outside the repo.
+
 ## Commands
 
 - `pnpm install` — install workspace dependencies.

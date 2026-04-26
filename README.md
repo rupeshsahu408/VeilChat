@@ -11,6 +11,7 @@ Veil is a private, end-to-end encrypted messenger. We can claim "the server can'
 
 The full Veil application — its UI, product features, and proprietary infrastructure — is not in this repo. **What is here is everything that touches your security.** That's the deal: full transparency on the parts that matter, nothing else.
 
+[![CI](https://github.com/rupeshsahu408/VeilChat/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/rupeshsahu408/VeilChat/actions/workflows/ci.yml)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](./LICENSE)
 [![Built with TypeScript](https://img.shields.io/badge/Built_with-TypeScript-3178c6.svg)](https://www.typescriptlang.org/)
 
@@ -45,6 +46,8 @@ pnpm test
 ```
 
 You'll see the X3DH handshake, Double Ratchet, Sender Keys, AEAD, KDF, Safety Numbers, and media-encryption test vectors all execute against the real production code. **The same code runs in the Veil client.**
+
+You don't have to take our word for the green badge either: the [CI workflow](./.github/workflows/ci.yml) re-runs the entire suite — including the published RFC 5869 (HKDF) and RFC 4231 (HMAC-SHA) vectors — on every push and pull request, across Linux, macOS, and Windows on Node 20 and 22.
 
 ---
 
