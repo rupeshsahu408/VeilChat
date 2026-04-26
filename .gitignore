@@ -34,6 +34,20 @@ Thumbs.db
 *.swp
 *.swo
 
+# Local development environment metadata — never commit. Each
+# contributor's editor / sandbox / cloud-dev setup may write its own
+# config here; none of it belongs in the public repo.
+.replit
+replit.nix
+.config/
+.upm/
+.cache/
+.local/
+.agents/
+.breakpoints
+.devcontainer/
+.gitpod.yml
+
 # Local development scratch — never commit
 scratch/
 tmp/
