@@ -37,7 +37,7 @@ body:
         - "server-contract/ (schema or wire format types)"
         - "docs/ (PROTOCOL, BLIND-SERVER, THREAT-MODEL, AUDIT)"
         - ".github/workflows/ (CI, CodeQL, Scorecard, DCO, release)"
-        - "Repository plumbing (package.json, pnpm-workspace, lockfile, .replit)"
+        - "Repository plumbing (package.json, pnpm-workspace, lockfile)"
         - "Something else (please describe)"
     validations:
       required: true
