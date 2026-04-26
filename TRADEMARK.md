@@ -93,8 +93,9 @@ reserved so users can tell who they are actually talking to.
 If you see a project, fork, app, website, or social media account
 misusing the VeilChat name or logo — for example, a copycat app on
 the Play Store using our logo, or a phishing site using our name —
-please report it to **brand@veil.app** with as much detail as you
-can: links, screenshots, app store IDs, and any context.
+please report it to **Help@sendora.me** (subject:
+`[VeilChat brand]`) with as much detail as you can: links,
+screenshots, app store IDs, and any context.
 
 We will investigate and, where appropriate, pursue takedowns through
 the relevant platform (app store report, registrar abuse, hosting

@@ -42,6 +42,22 @@ The README's green CI badge points at this workflow so the test suite —
 including the published RFC 5869 / RFC 4231 vectors — is verifiable from
 outside the repo.
 
+## Security disclosure, static analysis, and dependency updates
+
+`SECURITY.md` documents the coordinated-disclosure policy: report
+to **Help@sendora.me** with subject `[VeilChat security]`, 72-hour
+acknowledgement, severity tiers, supported versions, scope, and
+safe harbor. Two GitHub-Actions workflows back this up:
+
+- `.github/workflows/codeql.yml` runs CodeQL on `javascript-typescript`
+  with the `security-and-quality` query suite on every push and PR to
+  `main` plus a weekly Monday cron.
+- `.github/dependabot.yml` opens weekly PRs (Monday 06:00 UTC) for
+  the `npm` and `github-actions` ecosystems, with grouped updates for
+  the crypto primitives (`@noble/*`, `@scure/*`, `hash-wasm`) and dev
+  tooling (`typescript`, `vitest`, `@types/*`). Major-version bumps
+  are deliberately ignored so they get human review.
+
 ## Brand and trademark policy
 
 The product brand is **VeilChat** (with the underlying spec referred to

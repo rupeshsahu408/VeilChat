@@ -108,7 +108,7 @@ See [`packages/crypto/README.md`](./packages/crypto/README.md) for the full API.
 
 ## Reporting security issues
 
-Please do **not** open a public GitHub issue for security-sensitive findings. Email security@veil.app with details and we'll respond within 72 hours.
+Please do **not** open a public GitHub issue for security-sensitive findings. Email **Help@sendora.me** with the subject `[VeilChat security]` and we'll respond within 72 hours. The full disclosure policy, supported versions, scope, and safe-harbor terms are in [SECURITY.md](./SECURITY.md).
 
 ---
 
@@ -138,7 +138,8 @@ VeilChat protocol code.
 
 The full policy — including what counts as fair descriptive use and
 how to report brand abuse — is in [TRADEMARK.md](./TRADEMARK.md).
-Suspected misuse can be reported to **brand@veil.app**.
+Suspected misuse can be reported to **Help@sendora.me** with the
+subject `[VeilChat brand]`.
 
 ---
 
